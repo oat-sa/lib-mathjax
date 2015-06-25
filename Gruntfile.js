@@ -2,7 +2,7 @@ module.exports = function(grunt) {
   'use strict';
 
     var deps = [];
-    grunt.file.expand({cwd: 'unpacked'},  [
+    grunt.file.expand({cwd: 'wrapped'},  [
         'config/*.js',
         'extensions/**/*.js',
         'localization/en/*.js',
@@ -30,10 +30,12 @@ module.exports = function(grunt) {
 
         wrap : {
             amd : {
-                files :{
-                    cwd : 'unpacked',
-                src : ['unpacked/config/*.js', 'extensions/**/*.js', 'jax/**/*.js', 'localization/**/*.js'],
-                dest: 'wrapped/',
+                files : [{
+                    expand : true,
+                    cwd : 'unpacked/',
+                    src : ['config/*.js', 'extensions/**/*.js', 'jax/**/*.js', 'localization/**/*.js'],
+                    dest: 'wrapped/'
+                }],
                 options : {
                     wrapper : ['define(function(){\n  return function(MathJax){\n','  };\n});']
                 }
@@ -62,7 +64,7 @@ module.exports = function(grunt) {
                           "});"
                 },
                 paths: {
-                    "MathJax" : "unpacked"
+                    "MathJax" : "wrapped"
                 },
                 deps : deps,
                 name: "MathJax/MathJax",
@@ -87,12 +89,16 @@ module.exports = function(grunt) {
             }
         },
         copy : {
-           dist : {
+            amd : {
+                src : 'unpacked/MathJax.amd.js',
+                dest : 'wrapped/MathJax.js'
+            },
+            assets : {
                 files : [
                     {expand: true, src: ['fonts/HTML-CSS/TeX/**/*', '!fonts/HTML-CSS/TeX/png/**/*', '!fonts/HTML-CSS/TeX/otf/**/*'], dest: 'dist/'},
                 ]
            }
-        },
+        }
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -101,6 +107,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-wrap');
 
 
-  grunt.registerTask('preview', "Compiled dist but not optimized", ['clean', 'requirejs:dev', 'copy']);
-  grunt.registerTask('build', "Bundle MathJax distribution", ['clean', 'requirejs:dist', 'copy']);
+  grunt.registerTask('amdify', "Amdify sources", ['clean', 'wrap:amd', 'copy:amd']);
+  grunt.registerTask('preview', "Compiled dist but not optimized", ['amdify', 'requirejs:dev', 'copy:assets']);
+  grunt.registerTask('build', "Bundle MathJax distribution", ['amdify', 'requirejs:dist', 'copy:assets']);
 };

@@ -6,6 +6,8 @@ config/local/*.js
 unpacked/config/local/*.js
 !unpacked/config/local/local.js
 
+wrapped
+
 node_modules/
 npm-debug.log
 

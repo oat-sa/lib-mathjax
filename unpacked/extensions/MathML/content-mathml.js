@@ -10,13 +10,13 @@
  *  performed in a DOM filter for the MathML input jax, so that the
  *  Show Math As menu will still show the Original MathML as Content MathML,
  *  but the Presentation MathML can be obtained from the main MathML menu.
- *  
+ *
  *  To load it, include
- *  
+ *
  *      MathML: {
  *        extensions: ["content-mathml.js"]
  *      }
- *  
+ *
  *  in your configuration.
  *
  *  A portion of this file is taken from ctop.js which is
@@ -24,18 +24,18 @@
  *  and is used by permission of David Carlisle, who has agreed to allow us
  *  to release it under the Apache2 license (see below).  That portion is
  *  indicated via comments.
- *  
+ *
  *  The remainder falls under the copyright that follows.
  *  ---------------------------------------------------------------------
- *  
+ *
  *  Copyright (c) 2013-2015 The MathJax Consortium
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@
 
 
 MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
-  /* 
+  /*
    * Content MathML to Presentation MathML conversion
    *
    * based on David Carlisle's ctop.js - https://web-xslt.googlecode.com/svn/trunk/ctop/ctop.js
@@ -86,7 +86,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
     transformElements: function(elements) {
       for (var i = 0, l = elements.length; i<l; i++ ) {
         var mathNode = CToP.transformElement(elements[i]);
-        elements[i].parentNode.replaceChild(mathNode,elements[i]); 
+        elements[i].parentNode.replaceChild(mathNode,elements[i]);
       }
     },
 
@@ -179,8 +179,8 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
         }
       }
       return {
-        args:args, 
-          bvars:bvars, 
+        args:args,
+          bvars:bvars,
           qualifiers:qualifiers
       };
     },
@@ -307,7 +307,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
           if (args.length>0) {
             var z = args[(args.length === 1)?0:1];
             CToP.applyTransform(mrow,z,tokenPrecedence);
-          }	
+          }
           if (needsBrackets) {
             CToP.appendToken(mrow,'mo',')');
           }
@@ -650,7 +650,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
             apply.appendChild(mrow);
             CToP.applyTransform(parentNode,apply,0);
         }
-      } else {  
+      } else {
         CToP.transforms.token('mn')(parentNode,contentMMLNode);
       }
     },
@@ -730,7 +730,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
         for (var i = 0, l = bvars.length; i<l; i++ ) {
           if (i != 0) {
             CToP.appendToken(mrow2,'mo',',');
-          }	
+          }
           CToP.applyTransform(mrow2,bvars[i].childNodes[0],0);
         }
         msub.appendChild(mrow2);
@@ -742,14 +742,14 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
         for (i = 0, l = args.length; i<l; i++ ) {
           if (i != 0) {
             CToP.appendToken(mrow,'mo',',');
-          }	
+          }
           CToP.applyTransform(mrow,args[i],0);
         }
         CToP.appendToken(mrow,'mo',';');
         for (i = 0, l = qualifiers.length; i<l; i++) {
           if (i != 0) {
             CToP.appendToken(mrow,'mo',',');
-          }	
+          }
           CToP.applyTransform(mrow,qualifiers[i],0);
         }
         CToP.appendToken(mrow,'mo',']');
@@ -790,7 +790,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
       var children = CToP.classifyChildren(contentMMLNode);
       var args = children.args, bvars = children.bvars, qualifiers = children.qualifiers;
       var i, l, num_qualifiers;
-      
+
       if (bvars.length) {
         CToP.applyTokens.lambda(parentNode,contentMMLNode,firstArg,args,bvars,qualifiers,precedence);
       } else {
@@ -1301,7 +1301,8 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
               CToP.applyTransform(mrow,children[1],2);
             } else if (arg.nodeName === 'apply' && children.length>2 && children[0].nodeName === 'times' && children[1].nodeName === 'cn' && ( n = Number(CToP.getTextContent(children[1])) < 0)) {
               CToP.appendToken(mrow,'mo','\u2212');
-              CToP.getTextContent(children[1]) = -n;// fix me: modifying document
+              var _ctop_txt_content = CToP.getTextContent(children[1]);
+              _ctop_txt_content = -n;// fix me: modifying document
               CToP.applyTransform(mrow,arg,2);
             } else{
               CToP.appendToken(mrow,'mo','+');
@@ -1312,7 +1313,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
             CToP.applyTransform(mrow,arg,2);
           }
         } else {
-          CToP.applyTransform(mrow,arg,2);	
+          CToP.applyTransform(mrow,arg,2);
         }
       }
       if (needsBrackets) {
@@ -1343,7 +1344,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
       for (var i = 1, l = args.length; i<l; i++ ) {
         if (i != 1) {
           CToP.appendToken(mrow2,'mo',',');
-        }	
+        }
         CToP.applyTransform(mrow2,args[i],0);
       }
       msub.appendChild(mrow2);
@@ -1534,7 +1535,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
         msup = CToP.createElement('msup');
         mrow = CToP.createElement('mrow');
         msup.appendChild(mrow);
-        CToP.applyTransform(mrow,args[0],0); 
+        CToP.applyTransform(mrow,args[0],0);
         CToP.appendToken(msup,'mo','\u2032'); // tick
         parentNode.appendChild(msup);
       }
@@ -1652,7 +1653,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
           if (degree>0) {
             if (hadFirst) {
               CToP.appendToken(degreeRow,'mo','+');
-            }   
+            }
             CToP.appendToken(degreeRow,'mn',degree);
           }
         }
