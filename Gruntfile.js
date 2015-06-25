@@ -20,11 +20,26 @@ module.exports = function(grunt) {
         }
     });
 
+
+
     // Project configuration.
     grunt.initConfig({
         clean : {
-           dist : ['dist/*']
+           dist : ['dist/*', 'wrapped/']
         },
+
+        wrap : {
+            amd : {
+                files :{
+                    cwd : 'unpacked',
+                src : ['unpacked/config/*.js', 'extensions/**/*.js', 'jax/**/*.js', 'localization/**/*.js'],
+                dest: 'wrapped/',
+                options : {
+                    wrapper : ['define(function(){\n  return function(MathJax){\n','  };\n});']
+                }
+            }
+        },
+
         requirejs: {
             options: {
                 baseUrl: ".",
@@ -83,6 +98,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-wrap');
 
 
   grunt.registerTask('preview', "Compiled dist but not optimized", ['clean', 'requirejs:dev', 'copy']);

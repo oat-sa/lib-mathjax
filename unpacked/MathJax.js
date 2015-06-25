@@ -31,30 +31,31 @@
 //
 //  Check if browser can support MathJax (no one fails this nowadays)
 //
-if (document.getElementById && document.childNodes && document.createElement) {
+//if (document.getElementById && document.childNodes && document.createElement) {
 //
 //  Skip if MathJax is already loaded
 //
-if (!(window.MathJax && MathJax.Hub)) {
+//if (!(window.MathJax && MathJax.Hub)) {
   
 //
 //  Get author configuration from MathJax variable, if any
 //
-if (window.MathJax) {window.MathJax = {AuthorConfig: window.MathJax}}
-               else {window.MathJax = {}}
+//if (window.MathJax) {window.MathJax = {AuthorConfig: window.MathJax}}
+//               else {window.MathJax = {}}
 
-// MathJax.isPacked = true; // This line is uncommented by the packer.
+define('MathJax/MathJax',['require', 'module'], function(require, module){
 
-MathJax.version = "2.5";
+var MathJax = {};
+var BASENAME = "MathJax";
+
+MathJax.isPacked = true;
 MathJax.fileversion = "2.5.3";
 MathJax.cdnVersion = "2.5.3";  // specifies a revision to break caching
 MathJax.cdnFileVersions = {};  // can be used to specify revisions for individual files
 
 /**********************************************************/
 
-(function (BASENAME) {
-  var BASE = window[BASENAME];
-  if (!BASE) {BASE = window[BASENAME] = {}}
+(function (BASE) {
 
   var PROTO = [];  // a static object used to indicate when a prototype is being created
   var OBJECT = function (def) {
@@ -155,7 +156,7 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
     })
   });
 
-})("MathJax");
+})(MathJax);
 
 /**********************************************************/
 
@@ -208,9 +209,7 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
  *                                to the signal.  Responses can be asynchronous.
  */
 
-(function (BASENAME) {
-  var BASE = window[BASENAME];
-  if (!BASE) {BASE = window[BASENAME] = {}}
+(function (BASE) {
   //
   //  Create a callback from an associative array
   //
@@ -246,39 +245,44 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
   //
   //  Evaluate a string in global context
   //
-  var EVAL = function (code) {return eval.call(window,code)}
+  var EVAL = function (code) {
+    return eval(code)
+  }
+
   var TESTEVAL = function () {
-    EVAL("var __TeSt_VaR__ = 1"); // check if it works in global context
-    if (window.__TeSt_VaR__) {
-      try { delete window.__TeSt_VaR__; } // NOTE IE9 throws when in IE7 mode
-      catch (error) { window.__TeSt_VaR__ = null; } 
-    } else {
-      if (window.execScript) {
-        // IE
-        EVAL = function (code) {
-          BASE.__code = code;
-          code = "try {"+BASENAME+".__result = eval("+BASENAME+".__code)} catch(err) {"+BASENAME+".__result = err}";
-          window.execScript(code);
-          var result = BASE.__result; delete BASE.__result; delete BASE.__code;
-          if (result instanceof Error) {throw result}
-          return result;
-        }
-      } else {
-        // Safari2
-        EVAL = function (code) {
-          BASE.__code = code;
-          code = "try {"+BASENAME+".__result = eval("+BASENAME+".__code)} catch(err) {"+BASENAME+".__result = err}";
-          var head = (document.getElementsByTagName("head"))[0]; if (!head) {head = document.body}
-          var script = document.createElement("script");
-          script.appendChild(document.createTextNode(code));
-          head.appendChild(script); head.removeChild(script);
-          var result = BASE.__result; delete BASE.__result; delete BASE.__code;
-          if (result instanceof Error) {throw result}
-          return result;
-        }
-      }
-    }
-    TESTEVAL = null;
+    //deactivated test because it pollutes the global scope
+
+    //EVAL("var __TeSt_VaR__ = 1"); // check if it works in global context
+    //if (window.__TeSt_VaR__) {
+      //try { delete window.__TeSt_VaR__; } // NOTE IE9 throws when in IE7 mode
+      //catch (error) { window.__TeSt_VaR__ = null; }
+    //} else {
+      //if (window.execScript) {
+        //// IE
+        //EVAL = function (code) {
+          //BASE.__code = code;
+          //code = "try {"+BASENAME+".__result = eval("+BASENAME+".__code)} catch(err) {"+BASENAME+".__result = err}";
+          //window.execScript(code);
+          //var result = BASE.__result; delete BASE.__result; delete BASE.__code;
+          //if (result instanceof Error) {throw result}
+          //return result;
+        //}
+      //} else {
+        //// Safari2
+        //EVAL = function (code) {
+          //BASE.__code = code;
+          //code = "try {"+BASENAME+".__result = eval("+BASENAME+".__code)} catch(err) {"+BASENAME+".__result = err}";
+          //var head = (document.getElementsByTagName("head"))[0]; if (!head) {head = document.body}
+          //var script = document.createElement("script");
+          //script.appendChild(document.createTextNode(code));
+          //head.appendChild(script); head.removeChild(script);
+          //var result = BASE.__result; delete BASE.__result; delete BASE.__code;
+          //if (result instanceof Error) {throw result}
+          //return result;
+        //}
+      //}
+    //}
+    //TESTEVAL = null;
   }
 
   //
@@ -621,14 +625,12 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
   BASE.Callback.Signal = SIGNAL.find;
   BASE.Callback.Hooks = HOOKS;
   BASE.Callback.ExecuteHooks = EXECUTEHOOKS;
-})("MathJax");
+})(MathJax);
 
 
 /**********************************************************/
 
-(function (BASENAME) {
-  var BASE = window[BASENAME];
-  if (!BASE) {BASE = window[BASENAME] = {}}
+(function (BASE) {
   
   var isSafari2 = (navigator.vendor === "Apple Computer, Inc." &&
                    typeof navigator.vendorSub === "undefined");
@@ -796,23 +798,36 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
       //
       JS: function (file,callback) {
         var name = this.fileName(file);
-        var script = document.createElement("script");
+        //var script = document.createElement("script");
         var timeout = BASE.Callback(["loadTimeout",this,file]);
+
+          var amdfile = name.replace(/[\[\]]/g, '')
+                     .replace(/\.js$/, '');
+          require([amdfile], function(fileModule){
+            if(typeof fileModule === 'function'){
+                fileModule(MathJax);
+                //callback();
+            } else {
+                console.error("unable to load :" + file);
+            }
+          }, timeout);
+
+
         this.loading[file] = {
           callback: callback,
           timeout: setTimeout(timeout,this.timeout),
           status: this.STATUS.OK,
-          script: script
+ //         script: script
         };
         //
         // Add this to the structure above after it is created to prevent recursion
         //  when loading the initial localization file (before loading messsage is available)
         //
         this.loading[file].message = BASE.Message.File(name);
-        script.onerror = timeout;  // doesn't work in IE and no apparent substitute
-        script.type = "text/javascript";
-        script.src = file+this.fileRev(name);
-        this.head.appendChild(script);
+        //script.onerror = timeout;  // doesn't work in IE and no apparent substitute
+        //script.type = "text/javascript";
+        //script.src = file+this.fileRev(name);
+        //this.head.appendChild(script);
       },
       //
       //  Create a LINK tag to load the style sheet
@@ -1021,7 +1036,7 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
     }
   };
   
-})("MathJax");
+})(MathJax);
 
 /**********************************************************/
 
@@ -2753,8 +2768,8 @@ MathJax.Hub.Startup = {
 
 /**********************************************************/
 
-(function (BASENAME) {
-  var BASE = window[BASENAME], ROOT = "["+BASENAME+"]";
+(function (BASE) {
+  var ROOT = "[" + BASENAME + "]";
   var HUB = BASE.Hub, AJAX = BASE.Ajax, CALLBACK = BASE.Callback;
 
   var JAX = MathJax.Object.Subclass({
@@ -2911,8 +2926,8 @@ MathJax.Hub.Startup = {
     version: "2.5.0",
     directory: JAX.directory+"/output",
     extensionDir: JAX.extensionDir,
-    fontDir: ROOT+(BASE.isPacked?"":"/..")+"/fonts",
-    imageDir: ROOT+(BASE.isPacked?"":"/..")+"/images"
+    fontDir: HUB.config.root + "fonts",
+    imageDir: "images"
   });
   
   /***********************************/
@@ -3037,13 +3052,11 @@ MathJax.Hub.Startup = {
     sourceMenuTitle: /*_(MathMenu)*/ ["Original","Original Form"]
   };
   
-})("MathJax");
+})(MathJax);
 
 /**********************************************************/
 
-(function (BASENAME) {
-  var BASE = window[BASENAME];
-  if (!BASE) {BASE = window[BASENAME] = {}}
+(function (BASE) {
 
   var HUB = BASE.Hub; var STARTUP = HUB.Startup; var CONFIG = HUB.config;
   var HEAD = document.head || (document.getElementsByTagName("head")[0]);
@@ -3068,6 +3081,27 @@ MathJax.Hub.Startup = {
       BASE.Ajax.config.root = CONFIG.root;
       break;
     }
+  }
+
+ STARTUP.params.delayStartupUntil = 'configured';
+
+  //load the default config
+  MathJax.Hub.Config({
+      config: ["MMLorHTML.js"],
+      extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","toMathML.js","TeX/noErrors.js","TeX/noUndefined.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+      jax: ["input/TeX","input/MathML","input/AsciiMath","output/HTML-CSS","output/NativeMML"],
+      imageFont: null,
+      showMathMenu: false,
+      showMathMenuMSIE: false,
+      messageStyle: "none",
+      showProcessingMessages: false,
+
+  });
+
+  //config via AMD
+  var conf = module.config();
+  if(typeof conf.config === 'object'){
+    MathJax.Hub.Config(conf.config);
   }
 
   var AGENT = navigator.userAgent;
@@ -3223,6 +3257,15 @@ MathJax.Hub.Startup = {
     ["Post",STARTUP.signal,"End"]
   );
   
-})("MathJax");
+})(MathJax);
 
-}}
+
+    return MathJax;
+});
+
+define(['MathJax/MathJax', 'module'], function(MathJax, module){
+
+    MathJax.Hub.Config(module.config());
+    MathJax.Hub.Configured();
+    return MathJax;
+});
