@@ -13,6 +13,7 @@ module.exports = function(grunt) {
         'jax/output/HTML-CSS/fonts/TeX/**/*.js',
         '!jax/output/HTML-CSS/fonts/TeX/WinIE6/Regular/*.js',
         'jax/output/NativeMML/**/*.js',
+        'jax/output/CommonHTML/**/*.js',
     ]).forEach(function(source, index) {
         if(!/WinIE6/.test(source)){
             grunt.log.debug(source);
