@@ -11,6 +11,8 @@ module.exports = function(grunt) {
         'jax/output/HTML-CSS/*.js',
         'jax/output/HTML-CSS/autoload/*.js',
         'jax/output/HTML-CSS/fonts/TeX/**/*.js',
+        'jax/output/HTML-CSS/fonts/STIX/**/*.js',
+        'jax/output/HTML-CSS/fonts/STIX-Web/**/*.js',
         '!jax/output/HTML-CSS/fonts/TeX/WinIE6/Regular/*.js',
         'jax/output/NativeMML/**/*.js',
         'jax/output/CommonHTML/**/*.js',
@@ -96,7 +98,18 @@ module.exports = function(grunt) {
             },
             assets : {
                 files : [
-                    {expand: true, src: ['fonts/HTML-CSS/TeX/**/*', '!fonts/HTML-CSS/TeX/png/**/*', '!fonts/HTML-CSS/TeX/otf/**/*'], dest: 'dist/'},
+                    {
+                        expand: true,
+                        src: [
+                            'fonts/HTML-CSS/TeX/**/*',
+                            'fonts/HTML-CSS/STIX-Web/**/*',
+                            '!fonts/HTML-CSS/TeX/png/**/*',
+                            '!fonts/HTML-CSS/TeX/otf/**/*',
+                            '!fonts/HTML-CSS/STIX-Web/png/**/*',
+                            '!fonts/HTML-CSS/STIX-Web/otf/**/*'
+                        ],
+                        dest: 'dist/'
+                    }
                 ]
            }
         }
