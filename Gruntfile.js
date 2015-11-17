@@ -104,9 +104,7 @@ module.exports = function(grunt) {
                             'fonts/HTML-CSS/TeX/**/*',
                             'fonts/HTML-CSS/STIX-Web/**/*',
                             '!fonts/HTML-CSS/TeX/png/**/*',
-                            '!fonts/HTML-CSS/TeX/otf/**/*',
-                            '!fonts/HTML-CSS/STIX-Web/png/**/*',
-                            '!fonts/HTML-CSS/STIX-Web/otf/**/*'
+                            '!fonts/HTML-CSS/STIX-Web/png/**/*'
                         ],
                         dest: 'dist/'
                     }
