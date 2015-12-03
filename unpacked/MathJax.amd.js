@@ -666,7 +666,7 @@ MathJax.cdnFileVersions = {};  // can be used to specify revisions for individua
     loaded: {},         // files already loaded
     loading: {},        // files currently in process of loading
     loadHooks: {},      // hooks to call when files are loaded
-    timeout: 15*1000,   // timeout for loading of files (15 seconds)
+    timeout: (requirejs.s.contexts._.config.waitSeconds || 30) *1000,   // timeout for loading of files (15 seconds)
     styleDelay: 1,      // delay to use before styles are available
     config: {
       root: "",         // URL of root directory to load from
