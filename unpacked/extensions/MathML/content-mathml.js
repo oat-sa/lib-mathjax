@@ -66,7 +66,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
       /* mathvariant to use with corresponding <ci> type attribute */
       cistyles: {
         vector: 'bold-italic',
-      matrix: 'bold-upright'
+        matrix: 'bold-upright'
       },
 
       /* Symbol names to translate to characters
@@ -78,7 +78,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
   });
 
   var CToP = {
-    version: '2.4',
+    version: "2.6.0",
     settings: CONFIG,
 
     /* Transform the given <math> elements from Content MathML to Presentation MathML and replace the original elements
@@ -93,6 +93,7 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
     /* Transform a Content MathML element into Presentation MathML, and return the new element
     */
     transformElement: function(element) {
+      if (element.nodeName.indexOf(":") >= 0) element = CToP.cloneNode(element,true); // removes namespaces
       var mathNode = CToP.cloneNode(element);
       for (var j = 0, l = element.childNodes.length; j<l; j++ ) {
         CToP.applyTransform(mathNode,element.childNodes[j],0);
@@ -137,10 +138,10 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
     /* Create an element with given name, belonging to the MathML namespace
     */
     createElement: function(name) {
-      var math = (isMSIE ? document.createElement("m:"+name) :
-          document.createElementNS("http://www.w3.org/1998/Math/MathML",name));
-      math.isMathJax = true;
-      return math;
+      name = name.replace(/^.*:/,"");  // remove namespace
+      return (document.createElementNS ?
+                 document.createElementNS("http://www.w3.org/1998/Math/MathML",name) :
+                 document.createElement("m:"+name));
     },
 
     /* Get node's children
@@ -207,7 +208,12 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
         if (CToP.tokens[contentMMLNode.nodeName]) {
           CToP.tokens[contentMMLNode.nodeName](parentNode,contentMMLNode,precedence);
         } else if (contentMMLNode.childNodes.length === 0) {
-          CToP.appendToken(parentNode,'mi',contentMMLNode.nodeName);
+          var mml = CToP.MML[contentMMLNode.nodeName];
+          if (mml && mml.isa && mml.isa(CToP.mbase)) {
+            parentNode.appendChild(CToP.cloneNode(contentMMLNode));
+          } else {
+            CToP.appendToken(parentNode,'mi',contentMMLNode.nodeName);
+          }
         } else {
           var clonedChild = CToP.cloneNode(contentMMLNode);
           parentNode.appendChild(clonedChild);
@@ -1301,8 +1307,8 @@ MathJax.Extension["MathML/content-mathml"] = (function(HUB) {
               CToP.applyTransform(mrow,children[1],2);
             } else if (arg.nodeName === 'apply' && children.length>2 && children[0].nodeName === 'times' && children[1].nodeName === 'cn' && ( n = Number(CToP.getTextContent(children[1])) < 0)) {
               CToP.appendToken(mrow,'mo','\u2212');
-              var _ctop_txt_content = CToP.getTextContent(children[1]);
-              _ctop_txt_content = -n;// fix me: modifying document
+              var content = CToP.getTextContent(children[1]);
+              content = -n;// fix me: modifying document
               CToP.applyTransform(mrow,arg,2);
             } else{
               CToP.appendToken(mrow,'mo','+');
@@ -1712,6 +1718,8 @@ MathJax.Hub.Register.StartupHook("MathML Jax Ready",function () {
   var MATHML = MathJax.InputJax.MathML;
 
   var CToP = MathJax.Extension["MathML/content-mathml"];
+  CToP.mbase = MathJax.ElementJax.mml.mbase;
+  CToP.MML = MathJax.ElementJax.mml;
 
   MATHML.DOMfilterHooks.Add(function (data) {
     data.math = CToP.transformElement(data.math);

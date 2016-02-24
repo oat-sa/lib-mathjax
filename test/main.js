@@ -8,6 +8,5 @@ requirejs.config({
 });
 
 require(['MathJax.min'], function(M){
-        //M.Hub.Config({ root : '../dist/' });
-        //M.Hub.Configured();
+    console.log(M.Hub.Config());
 });

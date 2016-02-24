@@ -12,9 +12,9 @@ module.exports = function(grunt) {
         'jax/output/HTML-CSS/autoload/*.js',
         'jax/output/HTML-CSS/fonts/TeX/**/*.js',
         'jax/output/HTML-CSS/fonts/STIX/**/*.js',
-        'jax/output/HTML-CSS/fonts/STIX-Web/**/*.js',
-        '!jax/output/HTML-CSS/fonts/TeX/WinIE6/Regular/*.js',
+        '!jax/output/HTML-CSS/fonts/TeX/WinIE6/**/*.js',
         'jax/output/NativeMML/**/*.js',
+        'jax/output/PreviewHTML/**/*.js',
         'jax/output/CommonHTML/**/*.js',
     ]).forEach(function(source, index) {
         if(!/WinIE6/.test(source)){
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         clean : {
-           dist : ['dist/*', 'wrapped/']
+           dist : ['dist/*', 'wrapped/*']
         },
 
         wrap : {
@@ -71,7 +71,6 @@ module.exports = function(grunt) {
                 },
                 deps : deps,
                 name: "MathJax/MathJax",
-                //insertRequire: ['MathJax/MathJax'],
                 out: "dist/MathJax.min.js"
             },
             dev: {
@@ -82,12 +81,6 @@ module.exports = function(grunt) {
             dist: {
                 options: {
                     optimize: 'uglify2',
-                    uglify2: {
-                        //mangle : false,
-                        output: {
-                            'max_line_len': 2048
-                        }
-                    }
                 }
             }
         },
