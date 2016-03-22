@@ -1,10 +1,26 @@
-# lib-mathjax
+# AMD MathJax
 
-Minified version of the AMD version of the MathJax library.
-The following changes have been made :
+ - version of MathJax 2.6.1
 
- - replace their built-in module system by require.js
- - Move all global stuffs to the context
- - added grunt to build the final bundle
+This repository provides you a bundled version of MathJax that is AMD compliant. The bundle is about 1.3MB but contains everything when the formal version loads assets on demand. 
 
-see also <https://github.com/oat-sa/MathJax>
+## Rebuild
+
+### First time
+
+```sh
+npm install
+```
+
+### Build
+
+```sh
+grunt amdify
+grunt build
+```
+
+(do not run `grunt amdify build`)
+
+Then the assets are produced in the `dist` folder.
+
+

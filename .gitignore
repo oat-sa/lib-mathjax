@@ -1,0 +1,13 @@
+.*.swp
+.DS_Store
+docs/build/html-mathjax-site
+config/local/*.js
+!config/local/local.js
+unpacked/config/local/*.js
+!unpacked/config/local/local.js
+
+wrapped
+
+node_modules/
+npm-debug.log
+
